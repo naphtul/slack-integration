@@ -9,7 +9,7 @@ jobs:
     steps:
       - name: Escape pull request title
         id: escaping-for-slack
-        # Workaround for pull request titles with double quotes
+        # Workaround for pull request titles with double quotes 
         run: |
           import json
           import os
