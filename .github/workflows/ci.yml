@@ -8,7 +8,7 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: Escape pull request title
-        # Workaround for pull request titles with double quotes 
+        # Workaround for pull request titles with double quotes
         run: |
           import json
           import os
@@ -16,7 +16,7 @@ jobs:
               event = json.load(fh)
           title = event['pull_request']['title']
           print(title)
-          escaped = json.dumps(title)
+          escaped = title.replace('"', '\\"').replace('&', '&amp;').replace('<', '&lt;').replace('>', '&gt;')
           print(escaped)
           print(escaped[1:-1])
           with open(os.environ['GITHUB_ENV'], 'a') as fh:
