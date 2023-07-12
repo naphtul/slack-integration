@@ -5,7 +5,7 @@ on:
       - opened
 jobs:
   slack:
-    runs-on: self-hosted
+    runs-on: ubuntu-latest
     steps:
       - name: Escape pull request title
         # Workaround for pull request titles with double quotes 
