@@ -1,12 +1,24 @@
-name: Slack integration POC
+name: Slack integration
 on:
   pull_request:
     types:
       - opened
 jobs:
   slack:
-    runs-on: ubuntu-latest
+    runs-on: self-hosted
     steps:
+      - name: Escape pull request title
+        # Workaround for pull request titles with double quotes 
+        run: |
+          import json
+          import os
+          with open('${{ github.event_path }}') as fh:
+              event = json.load(fh)
+          title = event['pull_request']['title']
+          escaped = json.dumps(title)
+          with open(os.environ['GITHUB_ENV'], 'a') as fh:
+              print(f"PR_TITLE={escaped[1:-1]}", file=fh)
+        shell: python3 {0}
       - name: Send custom JSON data to Slack workflow
         id: slack
         uses: slackapi/slack-github-action@v1.24.0
@@ -14,13 +26,12 @@ jobs:
           # For posting a rich message using Block Kit
           payload: |
             {
-              "text": "New PR: ${{ github.event.pull_request.html_url }} by ${{ github.event.pull_request.user.login }}",
               "blocks": [
                 {
                   "type": "section",
                   "text": {
                     "type": "mrkdwn",
-                    "text": "New PR: ${{ github.event.pull_request.html_url }} by <${{ github.event.pull_request.user.html_url }}|${{ github.event.pull_request.user.login }}>"
+                    "text": "<${{ github.event.pull_request.html_url }}|${{ env.PR_TITLE }}> by <${{ github.event.pull_request.user.html_url }}|${{ github.event.pull_request.user.login }}>"
                   }
                 }
               ]
