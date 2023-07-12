@@ -8,6 +8,7 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: Escape pull request title
+        id: escaping-for-slack
         # Workaround for pull request titles with double quotes
         run: |
           import json
@@ -16,7 +17,7 @@ jobs:
               event = json.load(fh)
           title = event['pull_request']['title']
           escaped = title.replace('"', '\\"').replace('&', '&amp;').replace('<', '&lt;').replace('>', '&gt;')
-          with open(os.environ['GITHUB_ENV'], 'a') as fh:
+          with open(os.environ['GITHUB_OUTPUT'], 'a') as fh:
               print(f"PR_TITLE={escaped}", file=fh)
         shell: python3 {0}
       - name: Send custom JSON data to Slack workflow
@@ -31,7 +32,7 @@ jobs:
                   "type": "section",
                   "text": {
                     "type": "mrkdwn",
-                    "text": "<${{ github.event.pull_request.html_url }}|${{ env.PR_TITLE }}> by <${{ github.event.pull_request.user.html_url }}|${{ github.event.pull_request.user.login }}>"
+                    "text": "<${{ github.event.pull_request.html_url }}|${{ steps.escaping-for-slack.outputs.PR_TITLE }}> by <${{ github.event.pull_request.user.html_url }}|${{ github.event.pull_request.user.login }}>"
                   }
                 }
               ]
