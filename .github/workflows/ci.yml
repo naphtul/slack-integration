@@ -17,7 +17,7 @@ jobs:
           with open('${{ github.event_path }}') as fh:
               event = json.load(fh)
           title = event['pull_request']['title']
-          escaped = html.escape(title)
+          escaped = html.escape(json.dumps(title)[1:-1])
           with open(os.environ['GITHUB_OUTPUT'], 'a') as fh:
               print(f"PR_TITLE={escaped}", file=fh)
         shell: python3 {0}
