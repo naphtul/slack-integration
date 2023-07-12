@@ -9,14 +9,14 @@ jobs:
     steps:
       - name: Escape pull request title
         id: escaping-for-slack
-        # Workaround for pull request titles with double quotes 
+        # Workaround for pull request titles with double quotes
         run: |
           import json
           import os
           with open('${{ github.event_path }}') as fh:
               event = json.load(fh)
           title = event['pull_request']['title']
-          escaped = title.replace('"', '\\"').replace('&', '&amp;').replace('<', '&lt;').replace('>', '&gt;')
+          escaped = title.replace('\', '\\').replace('"', '\\"').replace('&', '&amp;').replace('<', '&lt;').replace('>', '&gt;')
           with open(os.environ['GITHUB_OUTPUT'], 'a') as fh:
               print(f"PR_TITLE={escaped}", file=fh)
         shell: python3 {0}
