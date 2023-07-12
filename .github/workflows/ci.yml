@@ -15,12 +15,9 @@ jobs:
           with open('${{ github.event_path }}') as fh:
               event = json.load(fh)
           title = event['pull_request']['title']
-          print(title)
           escaped = title.replace('"', '\\"').replace('&', '&amp;').replace('<', '&lt;').replace('>', '&gt;')
-          print(escaped)
-          print(escaped[1:-1])
           with open(os.environ['GITHUB_ENV'], 'a') as fh:
-              print(f"PR_TITLE={escaped[1:-1]}", file=fh)
+              print(f"PR_TITLE={escaped}", file=fh)
         shell: python3 {0}
       - name: Send custom JSON data to Slack workflow
         id: slack
